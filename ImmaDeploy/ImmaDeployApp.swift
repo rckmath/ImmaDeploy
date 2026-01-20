@@ -103,15 +103,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc private func statusItemClicked(_ sender: Any?) {
         guard let event = NSApp.currentEvent, let statusButton = statusItem?.button else { return }
-        switch event.type {
-        case .rightMouseUp, .rightMouseDown:
+        
+        // Check if this is a right-click or Control+Click (secondary click)
+        let isRightClick = event.type == .rightMouseUp || event.type == .rightMouseDown
+        let isControlClick = (event.type == .leftMouseUp || event.type == .leftMouseDown) && event.modifierFlags.contains(.control)
+        
+        if isRightClick || isControlClick {
             if let menu = contextMenu {
                 NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
             }
-        case .leftMouseUp, .leftMouseDown:
+        } else if event.type == .leftMouseUp || event.type == .leftMouseDown {
             toggleSettingsPopover()
-        default:
-            break
         }
     }
     

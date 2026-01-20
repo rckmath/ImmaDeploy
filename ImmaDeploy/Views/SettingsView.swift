@@ -80,33 +80,35 @@ struct SettingsView: View {
             .fixedSize(horizontal: false, vertical: true) // let form hug its content instead of filling all available height
             
             HStack(spacing: 2) {
-                Text("Imma Deploy v1.0.0")
-                    .font(.system(size: 11, weight: .semibold))
+                Text("Imma Deploy? v1.0")
+                    .font(.system(size: 10, weight: .semibold))
                     .frame(maxWidth: .infinity, alignment: .leading)
-                
-                Button {
-                    viewModel.fetchDeployStatus()
-                } label: {
-                    Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 10))
-                }
-                .buttonStyle(.bordered)
-                .controlSize(.small)
                 
                 Spacer()
                 
-                Button {
-                    NSApplication.shared.terminate(nil)
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "xmark.circle")
-                        Text("Quit app")
+                HStack(spacing: 4) {
+                    Button {
+                        viewModel.fetchDeployStatus()
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.system(size: 10))
                     }
-                    .font(.system(size: 10))
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                                        
+                    Button {
+                        NSApplication.shared.terminate(nil)
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "xmark.circle")
+                            Text("Quit app")
+                        }
+                        .font(.system(size: 10))
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.red)
+                    .controlSize(.small)
                 }
-                .buttonStyle(.bordered)
-                .tint(.red)
-                .controlSize(.small)
             }
             .padding(.horizontal, 20)
         }

@@ -152,7 +152,7 @@ class DeployViewModel: ObservableObject {
             try? await Task.sleep(nanoseconds: 250_000_000) // 250ms
             
             guard !Task.isCancelled, let self else { return }
-            await self.fetchDeployStatus()
+            self.fetchDeployStatus()
         }
     }
 }
