@@ -86,16 +86,7 @@ struct SettingsView: View {
                 
                 Spacer()
                 
-                HStack(spacing: 4) {
-                    Button {
-                        viewModel.fetchDeployStatus()
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .font(.system(size: 10))
-                    }
-                    .buttonStyle(.bordered)
-                    .controlSize(.small)
-                                        
+                HStack(spacing: 4) {                                        
                     Button {
                         NSApplication.shared.terminate(nil)
                     } label: {
