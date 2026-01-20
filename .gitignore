@@ -1,0 +1,84 @@
+#########################
+# macOS / General
+#########################
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+# macOS folder attributes
+.DocumentRevisions-V100
+.fseventsd
+.TemporaryItems
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+
+#########################
+# Xcode
+#########################
+DerivedData/
+build/
+
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+
+*.moved-aside
+*.xcworkspace/xcuserdata/
+
+
+#########################
+# Swift / SwiftPM
+#########################
+.build/
+Packages/
+Package.pins
+Package.resolved
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+
+#########################
+# CocoaPods
+#########################
+Pods/
+
+
+#########################
+# Carthage
+#########################
+Carthage/Build/
+
+
+#########################
+# fastlane
+#########################
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+
+#########################
+# Other tooling
+#########################
+.swiftpm/
+.vscode/
+.idea/
+
