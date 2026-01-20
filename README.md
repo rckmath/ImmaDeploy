@@ -1,6 +1,6 @@
-## ImmaDeploy
+![IMMA DEPLOY BANNER](./IMMA%20DEPLOY%20BANNER.png)
 
-ImmaDeploy is a lightweight macOS menu bar app that tells you **whether you should deploy today** using the public `shouldideploy.today` API.  
+ImmaDeploy is a lightweight macOS menu bar app that tells you **whether you should deploy today** using the public `shouldideploy.today` API.
 It periodically fetches the latest status for your timezone and language, and shows the current message directly in the menu bar with quick access to settings and refresh.
 
 ### Features
@@ -87,4 +87,3 @@ It periodically fetches the latest status for your timezone and language, and sh
 ### License
 
 Add your preferred license here (e.g., MIT, Apache 2.0) if you plan to open‑source this project.
-
