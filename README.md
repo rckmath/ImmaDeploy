@@ -3,9 +3,13 @@
     <h1>Imma Deploy?</h1>
 </div>
 
-"Imma Deploy?" is a lightweight macOS menu bar app that tells you **whether you should deploy today** using the public [Should I Deploy Today?](https://shouldideploy.today/) API.
+"Imma Deploy?" is my first macOS application. It's a lightweight macOS menu bar app that tells you **whether you should deploy today (or not)** using the public [Should I Deploy Today?](https://shouldideploy.today/) API.
 
-It periodically fetches the latest status for your timezone and language, and shows the current message directly in the menu bar with quick access to settings and refresh.
+It simply fetches the latest status for your timezone and language, and shows the current message directly in the menu bar.
+
+This ensures you won't play with the deploy, lol 🥸
+
+![Imma Deploy? Demo](Resources/immadeploy.gif)
 
 [![Download](https://img.shields.io/badge/download-latest-brightgreen?style=flat-square)](https://github.com/rckmath/ImmaDeploy/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
