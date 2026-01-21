@@ -59,7 +59,7 @@ Download the latest release from the [releases page](https://github.com/rckmath/
 
 ### Check Deploy Status
 
-Look at the menu bar text; it will show the current message from `shouldideploy.today` for your configured timezone/language.
+Look at the menu bar text; it will show the current message from [shouldideploy.today](https://shouldideploy.today/) for your configured timezone/language.
 
 ### Refresh Status
 
