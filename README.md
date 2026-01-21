@@ -11,14 +11,19 @@ This ensures you won't play with the deploy, lol 🥸
 
 ![Imma Deploy? Demo](Resources/immadeploy.gif)
 
+<div align="center">
+
 [![Download](https://img.shields.io/badge/download-latest-brightgreen?style=flat-square)](https://github.com/rckmath/ImmaDeploy/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
 ![Requirements](https://img.shields.io/badge/requirements-macOS%2014.6%2B-fa4e49?style=flat-square)
 [![License](https://img.shields.io/github/license/rckmath/ImmaDeploy?style=flat-square)](LICENSE)
 
-<a href="https://www.buymeacoffee.com/rckmath" target="_blank">
-    <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;">
-</a>
+   <a href="https://www.buymeacoffee.com/rckmath" target="_blank">
+       <img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;  width: 217px !important;">
+   </a>
+</div>
+
+---
 
 ## Features
 
@@ -29,6 +34,8 @@ This ensures you won't play with the deploy, lol 🥸
 - **Launch at startup**: Option to automatically launch the app when you log in
 - **Automatic refresh**: Fetches the latest deploy status every hour automatically
 - **Manual refresh**: Right-click the menu bar item to refresh immediately
+
+---
 
 ## Install
 
@@ -55,6 +62,8 @@ Download the latest release from the [releases page](https://github.com/rckmath/
    - Press **⌘R** to build and run.
    - The app should appear as text in the **menu bar** (no dock icon).
 
+---
+
 ## Usage
 
 ### Check Deploy Status
@@ -71,11 +80,13 @@ Left-click the menu bar item or select **Settings…** from the context menu (or
 
 ### Launch at Startup
 
-Enable "Launch at Startup" from the context menu to automatically start Imma Deploy? when you log in to your Mac.
+Enable "Launch at Startup" from the context menu to automatically start "Imma Deploy?" when you log in to your Mac.
 
 ### Quit
 
 Right-click the menu bar item and choose **Quit** (or press **⌘Q**).
+
+---
 
 ## Configuration
 
@@ -98,15 +109,19 @@ Supported languages:
 - Español (`es`)
 - Español (Argentina) (`es-AR`)
 
+---
+
 ## Requirements
 
 - **macOS**: 14.6 (Sequoia) or later
 - **Xcode**: 15+ (for building from source)
 - **Swift**: Uses modern Swift + SwiftUI and async/await networking
 
+---
+
 ## How It Works
 
-Imma Deploy? uses the [Should I Deploy Today?](https://shouldideploy.today/) API to fetch deploy recommendations based on:
+"Imma Deploy?" uses the [Should I Deploy Today?](https://shouldideploy.today/) API to fetch deploy recommendations based on:
 
 - The current day of the week
 - Your selected timezone
@@ -114,6 +129,8 @@ Imma Deploy? uses the [Should I Deploy Today?](https://shouldideploy.today/) API
 
 The app periodically fetches this information (every hour by default) and displays the API's message directly in your menu bar. The message updates automatically, and you can manually refresh at any time.
 
+---
+
 ## License
 
-Imma Deploy? is available under the [GPL-3.0 license](LICENSE).
+"Imma Deploy?" is available under the [GPL-3.0 license](LICENSE).

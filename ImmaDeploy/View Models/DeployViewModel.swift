@@ -28,17 +28,15 @@ class DeployViewModel: ObservableObject {
     private var timer: Timer?
     private var timezoneFetchTask: Task<Void, Never>?
     private let apiBaseURL = "https://shouldideploy.today/api"
-    private let fetchInterval: TimeInterval = 3600 // 1 hour
+    private let fetchInterval: TimeInterval = 14400
     private let launchAtStartupKey = "launchAtStartup"
     private var isSyncingLaunchAtStartup = false
 
     private var cancellables = Set<AnyCancellable>()
     
     init() {
-        // Load saved launch at startup setting
         isSyncingLaunchAtStartup = true
         launchAtStartup = UserDefaults.standard.bool(forKey: launchAtStartupKey)
-        // Sync with actual system state
         syncLaunchAtStartupState()
         isSyncingLaunchAtStartup = false
         
@@ -52,12 +50,9 @@ class DeployViewModel: ObservableObject {
         timer?.invalidate()
     }
     
-    // MARK: - Timezone Loading
-    
     private func loadTimezones() {
         guard let url = Bundle.main.url(forResource: "timezones", withExtension: "json", subdirectory: "Resources") ??
                       Bundle.main.url(forResource: "timezones", withExtension: "json") else {
-            // Fallback to system timezones if JSON file not found
             timezones = TimeZone.knownTimeZoneIdentifiers.sorted()
             return
         }
@@ -67,22 +62,16 @@ class DeployViewModel: ObservableObject {
             let decoder = JSONDecoder()
             timezones = try decoder.decode([String].self, from: data)
         } catch {
-            // Fallback to system timezones if parsing fails
             timezones = TimeZone.knownTimeZoneIdentifiers.sorted()
         }
     }
     
-    // MARK: - System Detection
-    
     private func detectSystemSettings() {
-        // Detect timezone
         selectedTimezone = TimeZone.current.identifier
         
-        // Detect language
         let preferredLanguage = Locale.preferredLanguages.first ?? "en"
         let languageCode = String(preferredLanguage.prefix(2))
         
-        // Check if language is supported, otherwise default to English
         let supportedLanguages = ["en", "pt", "es"]
         if supportedLanguages.contains(languageCode) {
             selectedLanguage = languageCode
@@ -93,27 +82,22 @@ class DeployViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Network Monitoring
     private func setupNetworkMonitoring() {
-        // Subscribe to reachability changes and update state accordingly
         NetworkMonitor.shared.$isReachable
             .receive(on: DispatchQueue.main)
             .sink { [weak self] reachable in
                 guard let self = self else { return }
                 if reachable {
-                    // Trigger an immediate fetch when network becomes available
                     if !self.isLoading {
                         self.fetchDeployStatus()
                     }
                 } else {
-                    // Reflect offline state in UI and stop any loading spinners
                     self.isLoading = false
                     self.message = "Waiting for network…"
                 }
             }
             .store(in: &cancellables)
 
-        // Initialize UI according to current reachability
         if NetworkMonitor.shared.isReachable {
             fetchDeployStatus()
         } else {
@@ -121,10 +105,7 @@ class DeployViewModel: ObservableObject {
         }
     }
     
-    // MARK: - API Fetching
-    
     func fetchDeployStatus() {
-        // Defer fetching until we have network connectivity
         if !NetworkMonitor.shared.isReachable {
             isLoading = false
             message = "Waiting for network…"
@@ -166,31 +147,23 @@ class DeployViewModel: ObservableObject {
         }
     }
     
-    // MARK: - Periodic Fetching
-    
     private func startPeriodicFetching() {
-        // Invalidate any existing timer before creating a new one
         timer?.invalidate()
         
-        // Use selector-based API to avoid capturing `self` in a @Sendable closure
         timer = Timer.scheduledTimer(timeInterval: fetchInterval,
                                      target: self,
                                      selector: #selector(handleTimer(_:)),
                                      userInfo: nil,
                                      repeats: true)
         
-        // Ensure timer runs on main run loop
         if let timer = timer {
             RunLoop.main.add(timer, forMode: .common)
         }
     }
     
     @objc private func handleTimer(_ timer: Timer) {
-        // We are on the main run loop; fetch on main actor
         fetchDeployStatus()
     }
-    
-    // MARK: - Settings
     
     func updateLanguage(_ language: String) {
         selectedLanguage = language
@@ -202,22 +175,18 @@ class DeployViewModel: ObservableObject {
         timezoneFetchTask?.cancel()
         
         timezoneFetchTask = Task { [weak self] in
-            // Small delay so the picker menu can close and layout settle smoothly
-            try? await Task.sleep(nanoseconds: 250_000_000) // 250ms
+            try? await Task.sleep(nanoseconds: 250_000_000)
             
             guard !Task.isCancelled, let self else { return }
             self.fetchDeployStatus()
         }
     }
     
-    // MARK: - Launch at Startup
-    
     private func syncLaunchAtStartupState() {
         let isEnabled: Bool
         if #available(macOS 13.0, *) {
             isEnabled = (SMAppService.mainApp.status == .enabled)
         } else {
-            // Best-effort fallback for older macOS: use stored preference only
             isEnabled = UserDefaults.standard.bool(forKey: launchAtStartupKey)
         }
         
@@ -233,8 +202,6 @@ class DeployViewModel: ObservableObject {
         if #available(macOS 13.0, *) {
             return SMAppService.mainApp.status == .enabled
         } else {
-            // On older systems, we can't reliably query the system without deprecated APIs.
-            // Return the stored preference as a best-effort signal.
             return UserDefaults.standard.bool(forKey: launchAtStartupKey)
         }
     }
@@ -248,13 +215,9 @@ class DeployViewModel: ObservableObject {
                     try SMAppService.mainApp.unregister()
                 }
             } catch {
-                // If registration fails, revert the toggle to reflect the actual system state
-                // and persist a consistent value.
             }
-            // Always resync from the system-reported state after attempting a change
             syncLaunchAtStartupState()
         } else {
-            // On older macOS versions, avoid deprecated APIs. Persist the preference only.
             UserDefaults.standard.set(enabled, forKey: launchAtStartupKey)
             isSyncingLaunchAtStartup = true
             launchAtStartup = enabled

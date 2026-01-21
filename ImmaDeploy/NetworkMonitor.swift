@@ -9,8 +9,6 @@ import Foundation
 import Network
 import Combine
 
-/// Monitors network reachability and exposes it to SwiftUI via `@Published`.
-/// Uses `NWPathMonitor` so the app can defer network work until connectivity is available.
 final class NetworkMonitor: ObservableObject {
     static let shared = NetworkMonitor()
 

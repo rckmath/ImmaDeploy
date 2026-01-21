@@ -29,16 +29,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         self.viewModel = DeployViewModel()
         
-        // Hide dock icon
         NSApp.setActivationPolicy(.accessory)
         
-        // Create status bar item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         setupMenu()
         setupPopover()
         
-        // Observe viewModel changes to update menu title
         viewModel.$message
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
@@ -46,7 +43,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
         
-        // Observe launchAtStartup changes to update menu item state
         viewModel.$launchAtStartup
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
@@ -74,18 +70,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let menu = NSMenu()
         
-        // Refresh item
         let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshAction), keyEquivalent: "r")
         refreshItem.target = self
         refreshItem.isEnabled = NetworkMonitor.shared.isReachable
         menu.addItem(refreshItem)
                 
-        // Settings item
         let settingsItem = NSMenuItem(title: "Settings...", action: #selector(showSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
                 
-        // Launch at Startup item
         let launchAtStartupItem = NSMenuItem(title: "Launch at Startup", action: #selector(toggleLaunchAtStartup), keyEquivalent: "")
         launchAtStartupItem.target = self
         launchAtStartupItem.state = viewModel.launchAtStartup ? .on : .off
@@ -93,7 +86,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         menu.addItem(NSMenuItem.separator())
         
-        // Quit item
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quitAction), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
@@ -149,13 +141,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc private func statusItemClicked(_ sender: Any?) {
         guard let event = NSApp.currentEvent, let statusButton = statusItem?.button else { return }
         
-        // Check if this is a right-click or Control+Click (secondary click)
         let isRightClick = event.type == .rightMouseUp || event.type == .rightMouseDown
         let isControlClick = (event.type == .leftMouseUp || event.type == .leftMouseDown) && event.modifierFlags.contains(.control)
         
         if isRightClick || isControlClick {
             if let menu = contextMenu {
-                // Update menu item state before showing menu
                 updateLaunchAtStartupMenuItem()
                 updateRefreshMenuItemEnabled()
                 NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
@@ -179,7 +169,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationWillTerminate(_ notification: Notification) {
-        // Cleanup
     }
 }
 
