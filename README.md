@@ -1,7 +1,6 @@
 <div align="center">
     <img src="ImmaDeploy/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width=200 height=200>
     <h1>Imma Deploy?</h1>
-</div>
 
 "Imma Deploy?" is my first macOS application. It's a lightweight macOS menu bar app that tells you **whether you should deploy today (or not)** using the public [Should I Deploy Today?](https://shouldideploy.today/) API.
 
@@ -10,8 +9,6 @@ It simply fetches the latest status for your timezone and language, and shows th
 This ensures you won't play with the deploy, lol 🥸
 
 ![Imma Deploy? Demo](Resources/immadeploy.gif)
-
-<div align="center">
 
 [![Download](https://img.shields.io/badge/download-latest-brightgreen?style=flat-square)](https://github.com/rckmath/ImmaDeploy/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
