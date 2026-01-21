@@ -31,6 +31,8 @@ class DeployViewModel: ObservableObject {
     private let fetchInterval: TimeInterval = 3600 // 1 hour
     private let launchAtStartupKey = "launchAtStartup"
     private var isSyncingLaunchAtStartup = false
+
+    private var cancellables = Set<AnyCancellable>()
     
     init() {
         // Load saved launch at startup setting
@@ -42,7 +44,7 @@ class DeployViewModel: ObservableObject {
         
         loadTimezones()
         detectSystemSettings()
-        fetchDeployStatus()
+        setupNetworkMonitoring()
         startPeriodicFetching()
     }
     
@@ -90,10 +92,45 @@ class DeployViewModel: ObservableObject {
             selectedLanguage = "en"
         }
     }
+
+    // MARK: - Network Monitoring
+    private func setupNetworkMonitoring() {
+        // Subscribe to reachability changes and update state accordingly
+        NetworkMonitor.shared.$isReachable
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] reachable in
+                guard let self = self else { return }
+                if reachable {
+                    // Trigger an immediate fetch when network becomes available
+                    if !self.isLoading {
+                        self.fetchDeployStatus()
+                    }
+                } else {
+                    // Reflect offline state in UI and stop any loading spinners
+                    self.isLoading = false
+                    self.message = "Waiting for network…"
+                }
+            }
+            .store(in: &cancellables)
+
+        // Initialize UI according to current reachability
+        if NetworkMonitor.shared.isReachable {
+            fetchDeployStatus()
+        } else {
+            message = "Waiting for network…"
+        }
+    }
     
     // MARK: - API Fetching
     
     func fetchDeployStatus() {
+        // Defer fetching until we have network connectivity
+        if !NetworkMonitor.shared.isReachable {
+            isLoading = false
+            message = "Waiting for network…"
+            return
+        }
+        
         guard !isLoading else { return }
         isLoading = true
         message = "Loading..."

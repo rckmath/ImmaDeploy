@@ -54,6 +54,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
         
+        NetworkMonitor.shared.$isReachable
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateRefreshMenuItemEnabled()
+            }
+            .store(in: &cancellables)
+        
         updateMenuTitle(viewModel.message)
     }
     
@@ -70,6 +77,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Refresh item
         let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshAction), keyEquivalent: "r")
         refreshItem.target = self
+        refreshItem.isEnabled = NetworkMonitor.shared.isReachable
         menu.addItem(refreshItem)
                 
         // Settings item
@@ -119,6 +127,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    private func updateRefreshMenuItemEnabled() {
+        guard let menu = contextMenu else { return }
+        for item in menu.items {
+            if item.action == #selector(refreshAction) {
+                item.isEnabled = NetworkMonitor.shared.isReachable
+                break
+            }
+        }
+    }
+    
     @objc private func quitAction() {
         NSApplication.shared.terminate(nil)
     }
@@ -139,6 +157,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             if let menu = contextMenu {
                 // Update menu item state before showing menu
                 updateLaunchAtStartupMenuItem()
+                updateRefreshMenuItemEnabled()
                 NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
             }
         } else if event.type == .leftMouseUp || event.type == .leftMouseDown {
