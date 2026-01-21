@@ -23,55 +23,89 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 2) {
             Form {
                 Section {
-                    HStack(alignment: .firstTextBaseline, spacing: 3) {
-                        Image(systemName: "globe")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                        
-                        Text("Language")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                        
-                        Picker("", selection: $viewModel.selectedLanguage) {
-                            ForEach(supportedLanguages, id: \.1) { name, code in
-                                Text(name)
-                                    .font(.subheadline)
-                                    .tag(code)
+                    HStack(alignment: .center, spacing: 8) {
+                        // Left column: fields
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                                Image(systemName: "globe")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                
+                                Text("Language")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                
+                                Picker("", selection: $viewModel.pendingLanguage) {
+                                    ForEach(supportedLanguages, id: \.1) { name, code in
+                                        Text(name)
+                                            .font(.subheadline)
+                                            .tag(code)
+                                    }
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                            }
+                            
+                            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                                Image(systemName: "clock")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                
+                                Text("Timezone")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                                
+                                Picker("", selection: $viewModel.pendingTimezone) {
+                                    ForEach(viewModel.timezones, id: \.self) { timezone in
+                                        Text(timezone)
+                                            .font(.subheadline)
+                                            .tag(timezone)
+                                    }
+                                }
+                                .labelsHidden()
+                                .pickerStyle(.menu)
+                                .frame(maxWidth: .infinity, alignment: .trailing)
                             }
                         }
-                        .labelsHidden()
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .onChange(of: viewModel.selectedLanguage) { oldValue, newValue in
-                            viewModel.updateLanguage(newValue)
-                        }
-                    }
-                    
-                    HStack(alignment: .firstTextBaseline, spacing: 3) {
-                        Image(systemName: "clock")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
                         
-                        Text("Timezone")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
+                        // Vertical divider between columns
+                        Rectangle()
+                            .fill(Color.secondary.opacity(0.2))
+                            .frame(width: 1)
+                            .padding(.vertical, 2)
                         
-                        Picker("", selection: $viewModel.selectedTimezone) {
-                            ForEach(viewModel.timezones, id: \.self) { timezone in
-                                Text(timezone)
-                                    .font(.subheadline)
-                                    .tag(timezone)
+                        // Right column: action icons
+                        VStack(alignment: .center, spacing: 8) {
+                            Button {
+                                viewModel.applyPendingChanges()
+                                dismiss()
+                            } label: {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 12))
                             }
-                        }
-                        .labelsHidden()
-                        .pickerStyle(.menu)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                        .onChange(of: viewModel.selectedTimezone) { oldValue, newValue in
-                            viewModel.updateTimezone(newValue)
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .tint(.green)
+                            .disabled(!viewModel.hasPendingChanges)
+                            .help("Apply changes")
+                            
+                            Button {
+                                // Reset pending changes to applied values
+                                viewModel.pendingLanguage = viewModel.selectedLanguage
+                                viewModel.pendingTimezone = viewModel.selectedTimezone
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 12))
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                            .tint(.red)
+                            .disabled(!viewModel.hasPendingChanges)
+                            .help("Discard changes")
                         }
                     }
                 }
-                
             }
             .formStyle(.grouped)
             .font(.subheadline)
@@ -80,7 +114,7 @@ struct SettingsView: View {
             
             HStack(spacing: 2) {
                 Text("Imma Deploy? v1.0")
-                    .font(.system(size: 9, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.secondary)
                     .padding(.trailing, 2)
                 Spacer()
@@ -101,14 +135,14 @@ struct SettingsView: View {
                     .buttonStyle(.bordered)
                     .tint(.gray)
                     .controlSize(.small)
-
+                    
                     Button {
                         if let url = URL(string: "https://buymeacoffee.com/rckmath") {
                             NSWorkspace.shared.open(url)
                         }
                     } label: {
                         Image(systemName: "cup.and.saucer.fill")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                     }
                     .buttonStyle(.bordered)
                     .tint(.yellow)
@@ -118,7 +152,7 @@ struct SettingsView: View {
                         NSApplication.shared.terminate(nil)
                     } label: {
                         Image(systemName: "xmark.circle")
-                            .font(.system(size: 9))
+                            .font(.system(size: 10))
                     }
                     .buttonStyle(.bordered)
                     .tint(.red)
@@ -129,7 +163,7 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .frame(width: 280)
+        .frame(width: 300)
         .padding(.bottom, 20)
     }
 }

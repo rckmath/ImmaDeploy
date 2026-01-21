@@ -16,6 +16,8 @@ class DeployViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var selectedLanguage: String = "en"
     @Published var selectedTimezone: String = TimeZone.current.identifier
+    @Published var pendingLanguage: String = "en"
+    @Published var pendingTimezone: String = TimeZone.current.identifier
     @Published var timezones: [String] = []
     @Published var launchAtStartup: Bool = false {
         didSet {
@@ -26,10 +28,11 @@ class DeployViewModel: ObservableObject {
     }
     
     private var timer: Timer?
-    private var timezoneFetchTask: Task<Void, Never>?
     private let apiBaseURL = "https://shouldideploy.today/api"
     private let fetchInterval: TimeInterval = 14400
     private let launchAtStartupKey = "launchAtStartup"
+    private let selectedLanguageKey = "selectedLanguage"
+    private let selectedTimezoneKey = "selectedTimezone"
     private var isSyncingLaunchAtStartup = false
 
     private var cancellables = Set<AnyCancellable>()
@@ -41,7 +44,19 @@ class DeployViewModel: ObservableObject {
         isSyncingLaunchAtStartup = false
         
         loadTimezones()
+        // Detect system defaults first
         detectSystemSettings()
+        // Override with stored preferences if available
+        if let storedLanguage = UserDefaults.standard.string(forKey: selectedLanguageKey) {
+            selectedLanguage = storedLanguage
+        }
+        if let storedTimezone = UserDefaults.standard.string(forKey: selectedTimezoneKey) {
+            selectedTimezone = storedTimezone
+        }
+        // Initialize pending selections to current applied values
+        pendingLanguage = selectedLanguage
+        pendingTimezone = selectedTimezone
+        
         setupNetworkMonitoring()
         startPeriodicFetching()
     }
@@ -165,21 +180,19 @@ class DeployViewModel: ObservableObject {
         fetchDeployStatus()
     }
     
-    func updateLanguage(_ language: String) {
-        selectedLanguage = language
-        fetchDeployStatus()
+    var hasPendingChanges: Bool {
+        pendingLanguage != selectedLanguage || pendingTimezone != selectedTimezone
     }
     
-    func updateTimezone(_ timezone: String) {
-        selectedTimezone = timezone
-        timezoneFetchTask?.cancel()
-        
-        timezoneFetchTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 250_000_000)
-            
-            guard !Task.isCancelled, let self else { return }
-            self.fetchDeployStatus()
-        }
+    func applyPendingChanges() {
+        // Apply pending selections
+        selectedLanguage = pendingLanguage
+        selectedTimezone = pendingTimezone
+        // Persist selections
+        UserDefaults.standard.set(selectedLanguage, forKey: selectedLanguageKey)
+        UserDefaults.standard.set(selectedTimezone, forKey: selectedTimezoneKey)
+        // Trigger immediate refresh
+        fetchDeployStatus()
     }
     
     private func syncLaunchAtStartupState() {
