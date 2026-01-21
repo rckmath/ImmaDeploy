@@ -113,7 +113,8 @@ struct SettingsView: View {
             .fixedSize(horizontal: false, vertical: true)
             
             HStack(spacing: 2) {
-                Text("Imma Deploy? v1.0")
+                let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
+                Text("Imma Deploy? v\(version)")
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundColor(.secondary)
                     .padding(.trailing, 2)

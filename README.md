@@ -15,7 +15,7 @@ This ensures you won't play with the deploy, lol 🥸
 
 [![Download](https://img.shields.io/badge/download-latest-brightgreen?style=flat-square)](https://github.com/rckmath/ImmaDeploy/releases/latest)
 ![Platform](https://img.shields.io/badge/platform-macOS-blue?style=flat-square)
-![Requirements](https://img.shields.io/badge/requirements-macOS%2014.6%2B-fa4e49?style=flat-square)
+![Requirements](https://img.shields.io/badge/requirements-macOS%2013.5%2B-fa4e49?style=flat-square)
 [![License](https://img.shields.io/github/license/rckmath/ImmaDeploy?style=flat-square)](LICENSE)
 
    <a href="https://www.buymeacoffee.com/rckmath" target="_blank">
@@ -113,7 +113,7 @@ Supported languages:
 
 ## Requirements
 
-- **macOS**: 14.6 (Sequoia) or later
+- **macOS**: 13.5 (Ventura) or later
 - **Xcode**: 15+ (for building from source)
 - **Swift**: Uses modern Swift + SwiftUI and async/await networking
 
