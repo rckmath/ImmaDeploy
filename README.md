@@ -29,7 +29,6 @@ This ensures you won't play with the deploy, lol 🥸
 - **Configurable timezone**: Choose which timezone the check should use (backed by a `timezones.json` resource or system time zones as fallback)
 - **Multi-language support**: Automatically detects your preferred language (`en`, `pt`, `es`, `es-AR` when available) and lets you change it in settings
 - **Launch at startup**: Option to automatically launch the app when you log in
-- **Automatic refresh**: Fetches the latest deploy status every hour automatically
 - **Manual refresh**: Right-click the menu bar item to refresh immediately
 
 ---
@@ -39,6 +38,8 @@ This ensures you won't play with the deploy, lol 🥸
 ### Manual Installation
 
 Download the latest release from the [releases page](https://github.com/rckmath/ImmaDeploy/releases/latest) and move the app into your `Applications` folder.
+
+_Allowing the application through macOS Privacy & Security settings may be needed._
 
 ### Build from Source
 
@@ -73,7 +74,7 @@ Right-click (or Control-click) the menu bar item and choose **Refresh** (or pres
 
 ### Open Settings
 
-Left-click the menu bar item or select **Settings…** from the context menu (or press **⌘,**) to open the SwiftUI settings popover. Change **language** and **timezone**; the app will automatically refresh the status based on your selection.
+Left-click the menu bar item or select **Settings…** from the context menu (or press **⌘,**) to open the SwiftUI settings popover. Change **language** and **timezone**; the app will automatically refresh the status by hitting the apply button based on your selection.
 
 ### Launch at Startup
 
@@ -124,7 +125,7 @@ Supported languages:
 - Your selected timezone
 - Your selected language
 
-The app periodically fetches this information (every hour by default) and displays the API's message directly in your menu bar. The message updates automatically, and you can manually refresh at any time.
+The app periodically fetches this information and displays the API's message directly in your menu bar. The message updates automatically, and you can manually refresh at any time.
 
 ---
 

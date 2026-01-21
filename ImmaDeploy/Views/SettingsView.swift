@@ -11,6 +11,7 @@ import AppKit
 struct SettingsView: View {
     @ObservedObject var viewModel: DeployViewModel
     @Environment(\.dismiss) private var dismiss
+    var onClose: (() -> Void)? = nil
     
     private let supportedLanguages = [
         ("English", "en"),
@@ -79,14 +80,17 @@ struct SettingsView: View {
                         VStack(alignment: .center, spacing: 8) {
                             Button {
                                 viewModel.applyPendingChanges()
-                                dismiss()
+                                if let onClose = onClose {
+                                    onClose()
+                                } else {
+                                    dismiss()
+                                }
                             } label: {
                                 Image(systemName: "checkmark.circle.fill")
                                     .font(.system(size: 12))
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
-                            .tint(.green)
                             .disabled(!viewModel.hasPendingChanges)
                             .help("Apply changes")
                             
@@ -100,7 +104,6 @@ struct SettingsView: View {
                             }
                             .buttonStyle(.bordered)
                             .controlSize(.small)
-                            .tint(.red)
                             .disabled(!viewModel.hasPendingChanges)
                             .help("Discard changes")
                         }

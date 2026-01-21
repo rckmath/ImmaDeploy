@@ -19,12 +19,13 @@ struct ImmaDeployApp: App {
     }
 }
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSPopoverDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
     private var viewModel: DeployViewModel!
     private var cancellables = Set<AnyCancellable>()
     private var contextMenu: NSMenu?
+    private var isPopoverShown: Bool = false
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         self.viewModel = DeployViewModel()
@@ -66,7 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusButton.title = viewModel.message
         statusButton.target = self
         statusButton.action = #selector(statusItemClicked(_:))
-        statusButton.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        statusButton.sendAction(on: [.leftMouseDown, .rightMouseDown])
         
         let menu = NSMenu()
         
@@ -135,40 +136,90 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func setupPopover() {
         popover = NSPopover()
-        popover?.behavior = .transient
+        popover?.delegate = self
+        popover?.behavior = .applicationDefined
+    }
+    
+    private func isPopoverActuallyVisible() -> Bool {
+        guard let window = popover?.contentViewController?.view.window else { return false }
+        return window.isVisible
+    }
+
+    private func openSettingsPopover() {
+        guard let statusButton = statusItem?.button else { return }
+        NSApp.activate(ignoringOtherApps: true)
+        let settingsView = SettingsView(viewModel: viewModel, onClose: { [weak self] in
+            self?.popover?.performClose(nil)
+            self?.isPopoverShown = false
+        })
+        let hostingController = NSHostingController(rootView: settingsView)
+        popover?.contentViewController = hostingController
+        popover?.show(relativeTo: statusButton.bounds, of: statusButton, preferredEdge: .minY)
+        if let window = popover?.contentViewController?.view.window {
+            window.makeKeyAndOrderFront(nil)
+            window.makeFirstResponder(window.contentView)
+        }
+        isPopoverShown = true
+    }
+
+    private func closeSettingsPopover() {
+        popover?.performClose(nil)
+        isPopoverShown = false
+    }
+    
+    private func toggleSettingsPopover() {
+        // Re-sync visibility against actual window visibility to avoid stale state
+        let actuallyVisible = isPopoverActuallyVisible()
+        if actuallyVisible != isPopoverShown {
+            isPopoverShown = actuallyVisible
+        }
+        if isPopoverShown {
+            closeSettingsPopover()
+        } else {
+            // Ensure any lingering popover is closed before opening
+            popover?.close()
+            openSettingsPopover()
+        }
     }
     
     @objc private func statusItemClicked(_ sender: Any?) {
         guard let event = NSApp.currentEvent, let statusButton = statusItem?.button else { return }
         
-        let isRightClick = event.type == .rightMouseUp || event.type == .rightMouseDown
-        let isControlClick = (event.type == .leftMouseUp || event.type == .leftMouseDown) && event.modifierFlags.contains(.control)
-        
-        if isRightClick || isControlClick {
+        if event.type == .rightMouseDown {
             if let menu = contextMenu {
                 updateLaunchAtStartupMenuItem()
                 updateRefreshMenuItemEnabled()
                 NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
             }
-        } else if event.type == .leftMouseUp || event.type == .leftMouseDown {
-            toggleSettingsPopover()
+            return
         }
-    }
-    
-    private func toggleSettingsPopover() {
-        if popover?.isShown == true {
-            popover?.performClose(nil)
-        } else {
-            guard let statusButton = statusItem?.button else { return }
-            let settingsView = SettingsView(viewModel: viewModel)
-            let hostingController = NSHostingController(rootView: settingsView)
-            popover?.contentViewController = hostingController
-            popover?.show(relativeTo: statusButton.bounds, of: statusButton, preferredEdge: .minY)
-            popover?.contentViewController?.view.window?.makeKey()
+        
+        if event.type == .leftMouseDown {
+            let isControlClick = event.modifierFlags.contains(.control)
+            if isControlClick {
+                if let menu = contextMenu {
+                    updateLaunchAtStartupMenuItem()
+                    updateRefreshMenuItemEnabled()
+                    NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
+                }
+                return
+            } else {
+                toggleSettingsPopover()
+                return
+            }
         }
     }
     
     func applicationWillTerminate(_ notification: Notification) {
+    }
+    
+    // MARK: - NSPopoverDelegate
+    func popoverWillShow(_ notification: Notification) {
+        isPopoverShown = true
+    }
+
+    func popoverDidClose(_ notification: Notification) {
+        isPopoverShown = false
     }
 }
 
