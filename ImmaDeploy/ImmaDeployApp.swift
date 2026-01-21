@@ -22,11 +22,13 @@ struct ImmaDeployApp: App {
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var popover: NSPopover?
-    private var viewModel = DeployViewModel()
+    private var viewModel: DeployViewModel!
     private var cancellables = Set<AnyCancellable>()
     private var contextMenu: NSMenu?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        self.viewModel = DeployViewModel()
+        
         // Hide dock icon
         NSApp.setActivationPolicy(.accessory)
         
@@ -41,6 +43,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] message in
                 self?.updateMenuTitle(message)
+            }
+            .store(in: &cancellables)
+        
+        // Observe launchAtStartup changes to update menu item state
+        viewModel.$launchAtStartup
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.updateLaunchAtStartupMenuItem()
             }
             .store(in: &cancellables)
         
@@ -61,13 +71,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let refreshItem = NSMenuItem(title: "Refresh", action: #selector(refreshAction), keyEquivalent: "r")
         refreshItem.target = self
         menu.addItem(refreshItem)
-        
-        menu.addItem(NSMenuItem.separator())
-        
+                
         // Settings item
         let settingsItem = NSMenuItem(title: "Settings...", action: #selector(showSettings), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
+                
+        // Launch at Startup item
+        let launchAtStartupItem = NSMenuItem(title: "Launch at Startup", action: #selector(toggleLaunchAtStartup), keyEquivalent: "")
+        launchAtStartupItem.target = self
+        launchAtStartupItem.state = viewModel.launchAtStartup ? .on : .off
+        menu.addItem(launchAtStartupItem)
         
         menu.addItem(NSMenuItem.separator())
         
@@ -91,13 +105,26 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         toggleSettingsPopover()
     }
     
+    @objc private func toggleLaunchAtStartup() {
+        viewModel.launchAtStartup.toggle()
+    }
+    
+    private func updateLaunchAtStartupMenuItem() {
+        guard let menu = contextMenu else { return }
+        for item in menu.items {
+            if item.action == #selector(toggleLaunchAtStartup) {
+                item.state = viewModel.launchAtStartup ? .on : .off
+                break
+            }
+        }
+    }
+    
     @objc private func quitAction() {
         NSApplication.shared.terminate(nil)
     }
     
     private func setupPopover() {
         popover = NSPopover()
-        popover?.contentSize = NSSize(width: 450, height: 400)
         popover?.behavior = .transient
     }
     
@@ -110,6 +137,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         if isRightClick || isControlClick {
             if let menu = contextMenu {
+                // Update menu item state before showing menu
+                updateLaunchAtStartupMenuItem()
                 NSMenu.popUpContextMenu(menu, with: event, for: statusButton)
             }
         } else if event.type == .leftMouseUp || event.type == .leftMouseDown {
@@ -124,7 +153,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             guard let statusButton = statusItem?.button else { return }
             let settingsView = SettingsView(viewModel: viewModel)
             let hostingController = NSHostingController(rootView: settingsView)
-            hostingController.view.frame = NSRect(x: 0, y: 0, width: 450, height: 400)
             popover?.contentViewController = hostingController
             popover?.show(relativeTo: statusButton.bounds, of: statusButton, preferredEdge: .minY)
             popover?.contentViewController?.view.window?.makeKey()

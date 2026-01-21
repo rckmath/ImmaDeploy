@@ -77,16 +77,31 @@ struct SettingsView: View {
             }
             .formStyle(.grouped)
             .font(.subheadline)
+            .padding(.vertical, 0)
             .fixedSize(horizontal: false, vertical: true) // let form hug its content instead of filling all available height
             
             HStack(spacing: 2) {
                 Text("Imma Deploy? v1.0")
-                    .font(.system(size: 10, weight: .semibold))
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.system(size: 9, weight: .semibold))
+                    .foregroundColor(.secondary)
+                    .padding(.trailing, 6)
                 
-                Spacer()
-                
-                HStack(spacing: 4) {                                        
+                HStack(spacing: 4) {
+                    Button {
+                        if let url = URL(string: "https://buymeacoffee.com/rckmath") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "cup.and.saucer.fill")
+                            Text("Donate")
+                        }
+                        .font(.system(size: 9))
+                    }
+                    .buttonStyle(.bordered)
+                    .tint(.yellow)
+                    .controlSize(.small)
+
                     Button {
                         NSApplication.shared.terminate(nil)
                     } label: {
@@ -94,7 +109,7 @@ struct SettingsView: View {
                             Image(systemName: "xmark.circle")
                             Text("Quit app")
                         }
-                        .font(.system(size: 10))
+                        .font(.system(size: 9))
                     }
                     .buttonStyle(.bordered)
                     .tint(.red)
@@ -104,7 +119,7 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
         }
         .frame(width: 280)
-        .padding(.vertical, 10)
+        .padding(.bottom, 20)
     }
 }
 
