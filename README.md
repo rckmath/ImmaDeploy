@@ -1,6 +1,6 @@
 <div align="center">
     <img src="ImmaDeploy/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width=200 height=200>
-    <h2 style="margin-bottom: 0.3em;">Imma Deploy?</h2>
+    <h1 style="margin-bottom: 0.3em;">Imma Deploy?</h1>
     <h4 style="margin-top: 0;">The "Should I Deploy Today?" directly in your menu bar!</h4>
 
 "Imma Deploy?" is my first macOS application. It's a lightweight macOS menu bar app that tells you **whether you should deploy today (or not)** using the public [Should I Deploy Today?](https://shouldideploy.today/) API.
