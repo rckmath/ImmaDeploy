@@ -1,6 +1,6 @@
 <div align="center">
     <img src="ImmaDeploy/Assets.xcassets/AppIcon.appiconset/icon_256x256.png" width=200 height=200>
-    <h1 style="margin-bottom: 0.3em;">Imma Deploy?</h1>
+    <h2 style="margin-bottom: 0.3em;">Imma Deploy?</h2>
     <h4 style="margin-top: 0;">The "Should I Deploy Today?" directly in your menu bar!</h4>
 
 "Imma Deploy?" is my first macOS application. It's a lightweight macOS menu bar app that tells you **whether you should deploy today (or not)** using the public [Should I Deploy Today?](https://shouldideploy.today/) API.
@@ -60,30 +60,6 @@ _Allowing the application through macOS Privacy & Security settings may be neede
 
    - Press **⌘R** to build and run.
    - The app should appear as text in the **menu bar** (no dock icon).
-
----
-
-## Usage
-
-### Check Deploy Status
-
-Look at the menu bar text; it will show the current message from [shouldideploy.today](https://shouldideploy.today/) for your configured timezone/language.
-
-### Refresh Status
-
-Right-click (or Control-click) the menu bar item and choose **Refresh** (or press **⌘R**) to fetch the latest status immediately.
-
-### Open Settings
-
-Left-click the menu bar item or select **Settings…** from the context menu (or press **⌘,**) to open the SwiftUI settings popover. Change **language** and **timezone**; the app will automatically refresh the status by hitting the apply button based on your selection.
-
-### Launch at Startup
-
-Enable "Launch at Startup" from the context menu to automatically start "Imma Deploy?" when you log in to your Mac.
-
-### Quit
-
-Right-click the menu bar item and choose **Quit** (or press **⌘Q**).
 
 ---
 
